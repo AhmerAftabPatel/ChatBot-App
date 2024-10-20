@@ -6,18 +6,26 @@ import { Octicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Loading from './components/loading';
 import CustomKeyboardView from './components/CustomKeyboardView';
+import { useAuth } from '../context/authContext';
 
 export default function SignIn() {
     const router = useRouter();
     const [loading, setLoading] = useState(false);
+    const {login} = useAuth()
 
     const emailRef = useRef("");
     const passwordRef = useRef("");
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (!emailRef.current || !passwordRef.current) {
             Alert.alert("Sign In", "Email and Password are requried");
             return;
+        }
+        setLoading(true);
+        const response = await login(emailRef.current, passwordRef.current);
+        setLoading(false);
+        if(!response.success){
+            Alert.alert("Sign In", response.msg)
         }
     }
     return (
@@ -51,9 +59,9 @@ export default function SignIn() {
                                     secureTextEntry
                                     placeholderTextColor="gray" />
                             </View>
-                            <Text style={{ fontSize: hp(1.8) }} className="font-semibold text-right text-neutral-500">
+                            {/* <Text style={{ fontSize: hp(1.8) }} className="font-semibold text-right text-neutral-500">
                                 Forgot Password
-                            </Text>
+                            </Text> */}
                         </View>
                         <View>
                             {

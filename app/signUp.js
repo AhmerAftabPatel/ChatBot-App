@@ -6,21 +6,34 @@ import { Feather, Octicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import Loading from './components/loading';
 import CustomKeyboardView from './components/CustomKeyboardView';
+import { useAuth } from '../context/authContext';
 
 export default function SignUp() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const {register} = useAuth()
 
   const emailRef = useRef("");
   const usernameRef = useRef("");
   const passwordRef = useRef("");
   const profileRef = useRef("");
 
-  const handleRegister = () => {
+  const handleRegister = async () => {
     if (!emailRef.current || !passwordRef.current || !usernameRef.current || !profileRef.current) {
       Alert.alert("Sign In", "All fields are requried");
       return;
     }
+
+    setLoading(true);
+
+    const response = await register(emailRef.current, passwordRef.current, usernameRef.current, profileRef.current);
+    setLoading(false);
+
+    console.log("result", response)
+    if(!response.success){
+      Alert.alert("Sign Up", response.msg)
+    }
+
   }
   return (
     <CustomKeyboardView>
@@ -36,7 +49,7 @@ export default function SignUp() {
             <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-2xl">
               <Feather name="user" size={hp(2.7)} color="gray" />
               <TextInput
-                onChangeText={value => emailRef.current = value}
+                onChangeText={value => usernameRef.current = value}
                 style={{ fontSize: hp(2) }}
                 className="flex-1 font-semibold text-neutral-700"
                 placeholder="Username"
@@ -66,7 +79,7 @@ export default function SignUp() {
             <View style={{ height: hp(7) }} className="flex-row gap-4 px-4 bg-neutral-100 items-center rounded-2xl">
               <Feather name="image" size={hp(2.7)} color="gray" />
               <TextInput
-                onChangeText={value => emailRef.current = value}
+                onChangeText={value => profileRef.current = value}
                 style={{ fontSize: hp(2) }}
                 className="flex-1 font-semibold text-neutral-700"
                 placeholder="Image"
