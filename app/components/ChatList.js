@@ -12,9 +12,9 @@ export default function ChatList({ users, currentUser }) {
         contentContainerStyle={{ flex: 1, paddingVertical: 25 }}
         keyExtractor={item => Math.random()}
         showsVerticalScrollIndicator={false}
-        renderItem={({item, index}) =>
+        renderItem={({ item, index }) =>
           <ChatItem
-        currentUser={currentUser}
+            currentUser={currentUser}
             router={router}
             noBorder={index + 1 === users.length}
             item={item} />}

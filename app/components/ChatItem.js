@@ -72,7 +72,7 @@ const stylesWrapepr = (noBorder) => StyleSheet.create({
         gap: 7,
         paddingBottom: 10,
         marginBottom: 15,
-        borderBottomWidth: noBorder ? '' : 0.2,
+        borderBottomWidth: noBorder ? 0 : 0.2,
         // borderBottomColor: 'grey'
     },
 });
