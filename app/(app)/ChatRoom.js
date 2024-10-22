@@ -17,6 +17,7 @@ import { dialogFlowConfig } from '../../env';
 
 export default function ChatRoom() {
     const item = useLocalSearchParams();
+    const {roomId} = item;
     const { user } = useAuth()
     console.log(item, "param item");
     const [messages, setMessages] = useState([])
@@ -25,6 +26,7 @@ export default function ChatRoom() {
     const styles = stylesWrapepr();
     const inputRef = useRef(null)
     const scrollviewRef = useRef(null);
+    const [isBot, setIsBot] = useState(false);
 
     useEffect(() => {
         Dialogflow_V2.setConfiguration(
@@ -37,7 +39,6 @@ export default function ChatRoom() {
 
     useEffect(() => {
         createRoomIfNotExists();
-        let roomId = getRoomId(user?.userId, item?.userId);
         const docRef = doc(db, "rooms", roomId);
         const messagesRef = collection(docRef, "messages");
         const q = query(messagesRef, orderBy('createdAt', 'asc'));
@@ -61,9 +62,9 @@ export default function ChatRoom() {
 
     const createRoomIfNotExists = async () => {
         // roomid
-        let roomId = getRoomId(user.userId, item.userId);
         await setDoc(doc(db, "rooms", roomId), {
             roomId,
+            type : item?.type == 'bot' ? 'bot' : 'user',
             createdAt: Timestamp.fromDate(new Date())
         });
     };
@@ -83,9 +84,7 @@ export default function ChatRoom() {
 
     const handleGoogleResponse = async (result) => {
         let text = result.queryResult.fulfillmentMessages[0].text.text[0];
-        console.log("text from google", text)
         try {
-            let roomId = getRoomId(user.userId, item?.userId)
             const docRef = doc(db, 'rooms', roomId);
             const messagesRef = collection(docRef, "messages");
             const newDoc = await addDoc(messagesRef, {
@@ -105,7 +104,6 @@ export default function ChatRoom() {
         let message = textRef.current.trim();
         if (!message) return;
         try {
-            let roomId = getRoomId(user.userId, item?.userId)
             const docRef = doc(db, 'rooms', roomId);
             const messagesRef = collection(docRef, "messages");
             textRef.current = ""
@@ -120,7 +118,7 @@ export default function ChatRoom() {
         } catch (e) {
             Alert.alert("Message", e.message)
         }
-        handleBotResponse(message)
+        if(item?.type == "bot") handleBotResponse(message)
     };
     useEffect(() => {
         updateScrollView()

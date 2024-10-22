@@ -1,5 +1,5 @@
 import { View, Text, StyleSheet } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { TouchableOpacity } from 'react-native'
 import { Image } from 'expo-image'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -9,9 +9,11 @@ import { db } from '../../firebaseConfig';
 
 export default function ChatItem({ item, noBorder, router, currentUser}) {
     const [lastMessage, setLastMessage] = useState(undefined);
+    const roomIdRef = useRef(null)
     useEffect(() => {
 
-        let roomId = getRoomId(currentUser?.userId, item?.userId);
+        let roomId = item?.type == "bot" ? item?.roomId : getRoomId(currentUser?.userId, item?.userId);
+        roomIdRef.current = roomId
         const docRef = doc(db, "rooms", roomId);
         const messagesRef = collection(docRef, "messages");
         const q = query(messagesRef, orderBy('createdAt', 'desc'));
@@ -27,7 +29,7 @@ export default function ChatItem({ item, noBorder, router, currentUser}) {
     }, []);
     const styles = stylesWrapepr(noBorder);
     const openChatRoom = () => {
-        router.push({pathname : "/ChatRoom", params: item});
+        router.push({pathname : "/ChatRoom", params: {...item, roomId : roomIdRef.current}});
     }
     const renderTime = () => {
         if(lastMessage){

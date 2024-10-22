@@ -30,15 +30,15 @@ export default function HomeHeader() {
             <View>
                 <Menu>
                     <MenuTrigger>
-                        <Text className='flex-2'>
+                        <View className='flex-2'>
                             {/* <Text className="text-white mr-10 mb-4">{user.username}</Text> */}
                             <Image
                                 style={{ height: hp(4.3), aspectRatio: 1, borderRadius: 100 }}
-                                source={user?.profileUrl}
+                                source={user?.profileUrl ?? "https://kristalle.com/wp-content/uploads/2020/07/dummy-profile-pic-1.jpg"}
                                 placeholder={blurhash}
                                 transition={500}
                             />
-                        </Text>
+                        </View>
                     </MenuTrigger>
                     <MenuOptions customStyles={{
                         optionsContainer: {
