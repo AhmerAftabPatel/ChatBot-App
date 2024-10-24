@@ -49,11 +49,11 @@ export default function home() {
     router.push({
       pathname: '/ChatRoom',
       params: {
-        userId: 'bot_1',
+        userId: 'bot_3',
         type: 'bot',
-        username: 'AI Assistant',
+        username: 'AI Assistant 3',
         profileUrl: 'https://www.boostability.com/wp-content/uploads/2021/02/Feb.-17-Bots-e1614642771145.jpg',
-        roomId : getRoomId(user.userId, 'bot_1'),
+        roomId : getRoomId(user.userId, 'bot_3'),
       }
     })
   }
