@@ -36,12 +36,12 @@ import { dialogFlowConfig } from "../../env";
 import * as ImagePicker from "expo-image-picker";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { Image } from "expo-image";
+import ChatSuggestions from "../components/ChatSuggestions";
 
 export default function ChatRoom() {
   const item = useLocalSearchParams();
   const { roomId } = item;
   const { user } = useAuth();
-  console.log(item, "param item");
   const [messages, setMessages] = useState([]);
   const router = useRouter();
   const textRef = useRef();
@@ -81,7 +81,6 @@ export default function ChatRoom() {
       keyboardListerner.remove();
     };
   }, []);
-  console.log("all messages", messages);
 
   const createRoomIfNotExists = async () => {
     // roomid
@@ -96,7 +95,6 @@ export default function ChatRoom() {
     Dialogflow_V2.requestQuery(
       msg,
       (result) => {
-        console.log("result", result);
         handleGoogleResponse(result);
       },
       (error) => {
@@ -146,7 +144,6 @@ export default function ChatRoom() {
   };
 
   const handleTextSend = async () => {
-    console.log(user, item, "users");
     let message = textRef.current.trim();
     if (!message) return;
     try {
@@ -245,6 +242,10 @@ export default function ChatRoom() {
             currentUser={user}
           />
         </View>
+        {messages && messages.length > 0 && <ChatSuggestions messages={messages} selectedText={(value) => {
+          textRef.current = value
+          handleSendMessage();
+        }} />}
         {fileRef?.current && (
           <View className="bg-white p-2 mx-4 rounded-lg relative">
             <View style={{ height: 100, width: 100, display: "relative" }}>
